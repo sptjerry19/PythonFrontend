@@ -664,6 +664,24 @@
                       <p
                         class="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400"
                       >
+                        group
+                      </p>
+                    </th>
+                    <th
+                      class="border-b border-blue-gray-50 py-3 px-6 text-left"
+                    >
+                      <p
+                        class="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400"
+                      >
+                        ip_address
+                      </p>
+                    </th>
+                    <th
+                      class="border-b border-blue-gray-50 py-3 px-6 text-left"
+                    >
+                      <p
+                        class="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400"
+                      >
                         updated_at
                       </p>
                     </th>
@@ -706,12 +724,29 @@
                         {{ keyword.times }}
                       </p>
                     </td>
+
+                    <td class="py-3 px-5 border-b border-blue-gray-50">
+                      <p
+                        class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
+                      >
+                        {{ keyword.times }}
+                      </p>
+                    </td>
+
+                    <td class="py-3 px-5 border-b border-blue-gray-50">
+                      <p
+                        class="block antialiased font-sans text-xs font-medium text-blue-gray-600"
+                      >
+                        {{ keyword.times }}
+                      </p>
+                    </td>
+
                     <td class="py-3 px-5 border-b border-blue-gray-50">
                       <div class="w-10/12">
                         <p
                           class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
                         >
-                          {{ keyword.updated_at }}
+                          {{ convertDateFormat(keyword.updated_at) }}
                         </p>
                       </div>
                     </td>
@@ -859,6 +894,8 @@
 
 <script>
 import axios from "axios";
+// Import thư viện moment
+import moment from "moment";
 export default {
   data() {
     return {
@@ -879,6 +916,16 @@ export default {
           console.log(error);
         });
     },
+
+    // Hàm chuyển đổi định dạng ngày giờ
+    convertDateFormat(dateTimeString) {
+      // Chuyển đổi ngày giờ sang đối tượng moment
+      const dateTimeMoment = moment(dateTimeString);
+
+      // Chuyển đổi sang định dạng "Y-m-d H:i:s"
+      return dateTimeMoment.format("YYYY-MM-DD HH:mm:ss");
+    },
+
     addKeyword() {
       const formData = new FormData();
       formData.append("keyword", this.keyword);
