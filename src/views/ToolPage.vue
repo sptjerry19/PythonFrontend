@@ -691,6 +691,15 @@
                       <p
                         class="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400"
                       >
+                        deleted_at
+                      </p>
+                    </th>
+                    <th
+                      class="border-b border-blue-gray-50 py-3 px-6 text-left"
+                    >
+                      <p
+                        class="block antialiased font-sans text-[11px] font-medium uppercase text-blue-gray-400"
+                      >
                         edit
                       </p>
                     </th>
@@ -755,7 +764,16 @@
                         <p
                           class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
                         >
-                          <button>
+                          {{ convertDateFormat(keyword.deleted_at) }}
+                        </p>
+                      </div>
+                    </td>
+                    <td class="py-3 px-5 border-b border-blue-gray-50">
+                      <div class="w-10/12">
+                        <p
+                          class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
+                        >
+                          <button @click="updateKeyword(keyword.id)">
                             <svg
                               class="h-8 w-8 text-slate-500 hover:text-slate-800 transition-colors"
                               width="24"
@@ -900,32 +918,51 @@ export default {
   data() {
     return {
       keywords: [],
-      keyword: "",
-      pagination: {},
+      pagination: null,
+      currentPage: 1,
+      intervalId: null,
     };
   },
+  created() {
+    this.startFetchingKeywords();
+  },
+  beforeDestroy() {
+    // Xóa interval khi component bị hủy để tránh rò rỉ bộ nhớ
+    clearInterval(this.intervalId);
+  },
   methods: {
-    paginations(page) {
+    fetchKeywords(page) {
       axios
         .get(this.$store.state.UrlServe + "/keywords/?page=" + page)
         .then((response) => {
           this.keywords = response.data.data;
-          console.log(response.data.data);
+          this.pagination = response.data.pagination;
+          console.log(this.pagination);
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    startFetchingKeywords() {
+      // Gọi ngay lập tức khi component được tạo
+      this.fetchKeywords(this.currentPage);
 
-    // Hàm chuyển đổi định dạng ngày giờ
-    convertDateFormat(dateTimeString) {
-      // Chuyển đổi ngày giờ sang đối tượng moment
-      const dateTimeMoment = moment(dateTimeString);
-
-      // Chuyển đổi sang định dạng "Y-m-d H:i:s"
-      return dateTimeMoment.format("YYYY-MM-DD HH:mm:ss");
+      // Sau đó gọi lại mỗi 5 giây
+      this.intervalId = setInterval(() => {
+        this.fetchKeywords(this.currentPage);
+      }, 5000);
     },
-
+    paginations(page) {
+      this.currentPage = page;
+      this.fetchKeywords(page);
+    },
+    convertDateFormat(dateTimeString) {
+      if (dateTimeString) {
+        const dateTimeMoment = moment(dateTimeString);
+        return dateTimeMoment.format("YYYY-MM-DD HH:mm:ss");
+      }
+      return 0;
+    },
     addKeyword() {
       const formData = new FormData();
       formData.append("keyword", this.keyword);
@@ -939,40 +976,25 @@ export default {
         .then((response) => {
           console.log(response.data);
           // Reset the form
-          window.location.reload();
+          this.fetchKeywords(this.currentPage);
           this.keyword = "";
         })
         .catch((error) => {
           console.log(error);
         });
     },
-
     deleteKeyword(id) {
       axios
         .delete(this.$store.state.UrlServe + "/keywords/" + id)
         .then((response) => {
           console.log(response.data);
           // Reset the form
-          window.location.reload();
+          this.fetchKeywords(this.currentPage);
         })
         .catch((error) => {
           console.log(error);
         });
     },
-  },
-  created() {
-    console.log(this.$store.state.UrlServe + "/keywords");
-
-    axios
-      .get(this.$store.state.UrlServe + "/keywords")
-      .then((response) => {
-        this.keywords = response.data.data;
-        this.pagination = response.data.pagination;
-        console.log(this.pagination);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   },
 };
 </script>
