@@ -51,7 +51,7 @@
             <button
               type="submit"
               class="max-w-[200px] h-auto rounded-full bg-white text-black py-3 px-6"
-              @click="updateKeyword"
+              @click.prevent="updateKeyword"
             >
               <span class="text-gray-800 font-semibold">Update</span>
             </button>
