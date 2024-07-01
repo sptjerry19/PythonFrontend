@@ -259,8 +259,14 @@
             <div class="mr-auto md:mr-4 md:w-56">
               <div class="relative w-full min-w-[200px] h-10">
                 <input
+                  type="text"
+                  id="search"
+                  name="search"
                   class="peer w-full h-full bg-transparent text-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-blue-500"
                   placeholder=" "
+                  v-model="search"
+                  @change="fetchKeywordsByOptions"
+                  @keyup.enter="fetchKeywordsByOptions"
                 />
                 <label
                   class="flex w-full h-full select-none pointer-events-none absolute left-0 font-normal peer-placeholder-shown:text-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-blue-gray-400 peer-focus:text-blue-500 before:border-blue-gray-200 peer-focus:before:border-blue-500 after:border-blue-gray-200 peer-focus:after:border-blue-500"
@@ -550,39 +556,29 @@
           </div>
         </div>
 
-        <div class="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-1">
+        <main class="ml-6">
+          <!-- component -->
+          <button
+            class="group relative h-12 w-48 overflow-hidden rounded-lg bg-white text-lg shadow"
+            @click="is_open_create_group_modal = true"
+          >
+            <div
+              class="absolute inset-0 w-3 bg-amber-400 transition-all duration-[250ms] ease-out group-hover:w-full"
+            ></div>
+            <span class="relative text-black group-hover:text-white"
+              >Create new group!</span
+            >
+          </button>
+        </main>
+
+        <div class="mb-4 mt-3 grid grid-cols-1 gap-6 xl:grid-cols-1">
           <div
             class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md overflow-hidden xl:col-span-2"
           >
             <div
-              class="relative bg-clip-border rounded-xl overflow-hidden bg-transparent text-gray-700 shadow-none m-0 flex items-center justify-between p-6"
+              class="relative bg-clip-border rounded-xl overflow-hidden bg-transparent text-gray-700 shadow-none m-0 flex items-center justify-start p-6"
             >
               <div>
-                <h6
-                  class="block antialiased tracking-normal font-sans text-base font-semibold leading-relaxed text-blue-gray-900 mb-1"
-                >
-                  Projects Tool
-                </h6>
-                <p
-                  class="antialiased font-sans text-sm leading-normal flex items-center gap-1 font-normal text-blue-gray-600"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="3"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                    class="h-4 w-4 text-blue-500"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    ></path>
-                  </svg>
-                  <strong>30 done</strong> this month
-                </p>
                 <div class="w-72 flex">
                   <div
                     class="relative h-10 w-full min-w-[200px]"
@@ -606,6 +602,49 @@
                   >
                     create
                   </button>
+                </div>
+              </div>
+              <div>
+                <div class="flex ml-10">
+                  <div
+                    class="relative border rounded-lg p-2 flex justify-between w-full min-w-[200px]"
+                  >
+                    <select
+                      class="w-full"
+                      name="groups"
+                      id=""
+                      v-model="group_id"
+                      @change="fetchKeywordsByOptions"
+                    >
+                      <option :value="null">Tất cả</option>
+                      <option
+                        v-for="group in groups"
+                        :key="group.id"
+                        :value="group.id"
+                      >
+                        {{ group.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="flex ml-6">
+                  <div
+                    class="relative border rounded-lg p-2 flex justify-between w-full min-w-[200px]"
+                  >
+                    <select
+                      class="w-full"
+                      name="status"
+                      id=""
+                      v-model="status"
+                      @change="fetchKeywordsByOptions"
+                    >
+                      <option value="null">Tất cả</option>
+                      <option value="working">Đang hoạt động</option>
+                      <option value="not_working">Không hoạt động</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <button
@@ -738,7 +777,11 @@
                       <p
                         class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
                       >
-                        {{ keyword.times }}
+                        {{
+                          keyword.group && keyword.group.name
+                            ? keyword.group.name
+                            : keyword.group_id
+                        }}
                       </p>
                     </td>
 
@@ -746,7 +789,7 @@
                       <p
                         class="block antialiased font-sans text-xs font-medium text-blue-gray-600"
                       >
-                        {{ keyword.times }}
+                        {{ keyword.ip }}
                       </p>
                     </td>
 
@@ -768,30 +811,31 @@
                         </p>
                       </div>
                     </td>
-                    <td class="py-3 px-5 border-b border-blue-gray-50">
-                      <div class="w-10/12">
+                    <td
+                      class="py-3 px-5 border-b border-blue-gray-50"
+                      @click="openModal(keyword)"
+                    >
+                      <div class="w-10/12 cursor-pointer">
                         <p
                           class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
                         >
-                          <button @click="updateKeyword(keyword.id)">
-                            <svg
-                              class="h-8 w-8 text-slate-500 hover:text-slate-800 transition-colors"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              stroke-width="2"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            >
-                              <path stroke="none" d="M0 0h24v24H0z" />
-                              <path
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                              />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                          </button>
+                          <svg
+                            class="h-8 w-8 text-slate-500 hover:text-slate-800 transition-colors"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" />
+                            <path
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                            />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
                         </p>
                       </div>
                     </td>
@@ -800,7 +844,27 @@
                         <p
                           class="antialiased font-sans mb-1 block text-xs font-medium text-blue-gray-600"
                         >
-                          <button @click="deleteKeyword(keyword.id)">
+                          <button
+                            v-if="keyword.deleted_at != null"
+                            @click="updateStatusKeyword(keyword.id)"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="text-blue-400 size-8 hover:text-blue-600"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                              />
+                            </svg>
+                          </button>
+
+                          <button v-else @click="deleteKeyword(keyword.id)">
                             <svg
                               class="h-8 w-8 text-red-500 hover:text-red-700"
                               viewBox="0 0 24 24"
@@ -908,16 +972,45 @@
       </div>
     </div>
   </div>
+
+  <UpdateKeyword
+    v-if="is_open_modal_update"
+    :keyword="current_keyword.keywords"
+    :group_id="current_keyword.group_id || 0"
+    :groups="groups"
+    :keyword_id="current_keyword.id"
+    @close="is_open_modal_update = false"
+  />
+
+  <FormNewGroup
+    v-if="is_open_create_group_modal"
+    @close="is_open_create_group_modal = false"
+    @success="fetchGroups"
+  />
 </template>
 
 <script>
 import axios from "axios";
 // Import thư viện moment
 import moment from "moment";
+import UpdateKeyword from "../components/UpdateKeyword.vue";
+import FormNewGroup from "../components/FormNewGroup.vue";
 export default {
+  components: {
+    UpdateKeyword,
+    FormNewGroup,
+  },
   data() {
     return {
+      is_open_modal_update: false,
+      is_open_create_group_modal: false,
+      current_keyword: null,
+      status: null,
       keywords: [],
+      keyword: "",
+      search: null,
+      groups: [],
+      group_id: null,
       pagination: null,
       currentPage: 1,
       intervalId: null,
@@ -931,13 +1024,62 @@ export default {
     clearInterval(this.intervalId);
   },
   methods: {
+    openModal(keyword) {
+      console.log(keyword);
+      this.current_keyword = keyword;
+      this.is_open_modal_update = true;
+    },
     fetchKeywords(page) {
+      let url = `${this.$store.state.UrlServe}/keywords/?page=${page}`;
+      if (this.group_id !== null) {
+        url += `&group_id=${this.group_id}`;
+      }
+      if (this.status !== null) {
+        url += `&status=${this.status}`;
+      }
+      if (this.search !== null) {
+        url += `&keyword=${this.search}`;
+      }
       axios
-        .get(this.$store.state.UrlServe + "/keywords/?page=" + page)
+        .get(url)
+        .then((response) => {
+          this.keywords = response.data.data;
+          this.pagination = response.data.pagination;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    fetchKeywordsByOptions(page) {
+      this.currentPage = 1;
+      let url = `${this.$store.state.UrlServe}/keywords/?page=${page}`;
+      if (this.group_id !== null) {
+        url += `&group_id=${this.group_id}`;
+      }
+      if (this.status !== null) {
+        url += `&status=${this.status}`;
+      }
+      if (this.search !== null) {
+        url += `&keyword=${this.search}`;
+      }
+      axios
+        .get(url)
         .then((response) => {
           this.keywords = response.data.data;
           this.pagination = response.data.pagination;
           console.log(this.pagination);
+          console.log(this.keywords);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    fetchGroups() {
+      axios
+        .get(this.$store.state.UrlServe + "/groups")
+        .then((response) => {
+          this.groups = response.data.data;
+          console.log(this.groups);
         })
         .catch((error) => {
           console.log(error);
@@ -946,11 +1088,12 @@ export default {
     startFetchingKeywords() {
       // Gọi ngay lập tức khi component được tạo
       this.fetchKeywords(this.currentPage);
+      this.fetchGroups();
 
       // Sau đó gọi lại mỗi 5 giây
       this.intervalId = setInterval(() => {
         this.fetchKeywords(this.currentPage);
-      }, 5000);
+      }, 3000);
     },
     paginations(page) {
       this.currentPage = page;
@@ -966,6 +1109,9 @@ export default {
     addKeyword() {
       const formData = new FormData();
       formData.append("keyword", this.keyword);
+      if (this.group_id !== null) {
+        formData.append("group_id", this.group_id);
+      }
 
       axios
         .post(this.$store.state.UrlServe + "/keywords", formData, {
@@ -988,6 +1134,19 @@ export default {
         .delete(this.$store.state.UrlServe + "/keywords/" + id)
         .then((response) => {
           console.log(response.data);
+          // Reset the form
+          this.fetchKeywords(this.currentPage);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    updateStatusKeyword(id) {
+      axios
+        .patch(this.$store.state.UrlServe + "/keywords/status/" + id)
+        .then((response) => {
+          console.log(response);
           // Reset the form
           this.fetchKeywords(this.currentPage);
         })
