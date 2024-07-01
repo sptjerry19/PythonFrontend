@@ -115,6 +115,7 @@ export default {
         )
         .then((response) => {
           console.log(response.data);
+          this.handleUpdate();
         })
         .catch((error) => {
           console.log(error);

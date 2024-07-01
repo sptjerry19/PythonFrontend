@@ -23,7 +23,7 @@
         </button>
       </div>
       <form>
-        <div class="mb-6">
+        <div class="mb-6" @keyup.enter="handleSubmit">
           <label for="name" class="text-sm font-medium text-gray-900 block mb-2"
             >Input name of group</label
           >
@@ -53,8 +53,7 @@
         <button
           type="submit"
           class="w-full text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-          @click="handleSubmit"
-          @keyup.enter="handleSubmit"
+          @click.prevent="handleSubmit"
         >
           Submit
         </button>

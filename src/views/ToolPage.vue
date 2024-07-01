@@ -980,6 +980,7 @@
     :groups="groups"
     :keyword_id="current_keyword.id"
     @close="is_open_modal_update = false"
+    @update="fetchKeywordsByOptions"
   />
 
   <FormNewGroup
