@@ -4,8 +4,8 @@ import { createStore } from "vuex";
 // Create a new store instance.
 const store = createStore({
   state: {
-    // UrlServe: "https://apicmsvietapp.vietapp.vn/api/cms",
-    UrlServe: "http://127.0.0.1:8000/api/cms",
+    UrlServe: "https://apicmsvietapp.vietapp.vn/api/cms",
+    // UrlServe: "http://127.0.0.1:8000/api/cms",
     urlStorage: "http://127.0.0.1:8000/storage/",
     token: localStorage.getItem("token"),
     isAuthenticated: false,

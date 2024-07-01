@@ -1030,7 +1030,7 @@ export default {
       this.is_open_modal_update = true;
     },
     fetchKeywords(page) {
-      let url = `${this.$store.state.UrlServe}/keywords/?page=${page}`;
+      let url = `${this.$store.state.UrlServe}/keywords?page=${page}`;
       if (this.group_id !== null) {
         url += `&group_id=${this.group_id}`;
       }
@@ -1052,7 +1052,7 @@ export default {
     },
     fetchKeywordsByOptions(page) {
       this.currentPage = 1;
-      let url = `${this.$store.state.UrlServe}/keywords/?page=${page}`;
+      let url = `${this.$store.state.UrlServe}/keywords?page=${page}`;
       if (this.group_id !== null) {
         url += `&group_id=${this.group_id}`;
       }
